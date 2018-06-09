@@ -25,7 +25,7 @@ def generate_to_files(path: str, count: int):
         soup = BeautifulSoup(res.text, 'html.parser')
         random_text = soup.find('textarea').text
         filtered = '\n'.join(list(filter(lambda x: not re.match(r'^\s*$', x), random_text.split('\n'))))
-        filename = 'generated_{}'.format(i)
+        filename = 'generated_{}.txt'.format(i)
         filepath = os.path.join(path, filename)
         with open(filepath, 'w') as file:
             file.write(filtered)
