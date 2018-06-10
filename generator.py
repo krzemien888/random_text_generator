@@ -20,9 +20,9 @@ HEADERS =  {
 
 
 def save_to_file(path: str, content: str, times: int):
-    for _ in range(times):
-        with open(path, 'a') as file:
-            file.write(content)
+    repeated_content = '\n'.join(content for _ in range(times))
+    with open(path, 'a') as file:
+        file.write(repeated_content)
     print('Text saved in {}'.format(path))
 
 
