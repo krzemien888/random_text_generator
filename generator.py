@@ -4,6 +4,7 @@ import os
 import argparse
 import requests
 from bs4 import BeautifulSoup
+from multiprocessing import Pool
 
 
 URL = r'http://www.randomtextgenerator.com/'
@@ -18,7 +19,15 @@ HEADERS =  {
 }
 
 
+def save_to_file(path: str, content: str, times: int):
+    for _ in range(times):
+        with open(path, 'a') as file:
+            file.write(content)
+    print('Text saved in {}'.format(path))
+
+
 def generate_to_files(path: str, count: int, repeat: int):
+    files_content = []
     for i in range(count):
         print('Downloading {} file out of {}'.format(i + 1, count))
         res = requests.post(url=URL, data=DATA, headers=HEADERS)
@@ -27,10 +36,12 @@ def generate_to_files(path: str, count: int, repeat: int):
         filtered = '\n'.join(list(filter(lambda x: not re.match(r'^\s*$', x), random_text.split('\n'))))
         filename = 'generated_{}.txt'.format(i)
         filepath = os.path.join(path, filename)
-        for _ in range(repeat):
-            with open(filepath, 'w') as file:
-               file.write(filtered)
-        print('Text saved in {}'.format(filepath))
+        files_content.append((filepath, filtered))
+    with Pool(processes=8) as p:
+        for filepath, content in files_content:
+            p.apply_async(save_to_file, (filepath, content, repeat))
+        p.close()
+        p.join()
 
 
 if __name__ == '__main__':
