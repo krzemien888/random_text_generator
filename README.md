@@ -1,5 +1,5 @@
 # random_text_generator
-Parameters:
-directory to save files to
-number of files
-how many times append same text to file
+## example usage:
+```bash
+./generator directory_to_save_files_to number_of_files_to_generate how_many_times_append_text
+```
