@@ -18,7 +18,7 @@ HEADERS =  {
 }
 
 
-def generate_to_files(path: str, count: int):
+def generate_to_files(path: str, count: int, appent_repeat: int):
     for i in range(count):
         print('Downloading {} file out of {}'.format(i + 1, count))
         res = requests.post(url=URL, data=DATA, headers=HEADERS)
@@ -27,16 +27,19 @@ def generate_to_files(path: str, count: int):
         filtered = '\n'.join(list(filter(lambda x: not re.match(r'^\s*$', x), random_text.split('\n'))))
         filename = 'generated_{}.txt'.format(i)
         filepath = os.path.join(path, filename)
+    for _ in range(append_repeat):
         with open(filepath, 'w') as file:
-            file.write(filtered)
-        print('Text saved in {}'.format(filepath))
+           file.write(filtered)
+    print('Text saved in {}'.format(filepath))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("dir")
     parser.add_argument("file_count")
+    parser.add_argument("append_repeat")
     args = parser.parse_args()
     file_count = args.file_count
+    append_repeat = args.append_repeat
     base_path = os.path.abspath(args.dir)
-    generate_to_files(base_path, int(file_count))
+    generate_to_files(base_path, int(file_count), int(append_repeat))
