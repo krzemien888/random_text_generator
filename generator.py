@@ -5,6 +5,7 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
+import codecs
 
 
 URL = r'http://www.randomtextgenerator.com/'
@@ -21,7 +22,7 @@ HEADERS =  {
 
 def save_to_file(path: str, content: str, times: int):
     repeated_content = '\n'.join(content for _ in range(times))
-    with open(path, 'a') as file:
+    with codecs.open(path, 'w', encoding='utf-8') as file:
         file.write(repeated_content)
     print('Text saved in {}'.format(path))
 
@@ -37,7 +38,7 @@ def generate_to_files(path: str, count: int, repeat: int):
         filename = 'generated_{}.txt'.format(i)
         filepath = os.path.join(path, filename)
         files_content.append((filepath, filtered))
-    with Pool(processes=8) as p:
+    with Pool() as p:
         for filepath, content in files_content:
             p.apply_async(save_to_file, (filepath, content, repeat))
         p.close()
